@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= guild.name %> - UAC Bot</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+    nav { background: #16213e; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2a2a4a; }
+    nav h2 { font-size: 1.2rem; }
+    nav a { color: #aaa; text-decoration: none; }
+    nav a:hover { color: #fff; }
+    .container { max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+    .back { display: inline-block; margin-bottom: 1rem; color: #aaa; text-decoration: none; }
+    .back:hover { color: #fff; }
+    h1 { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; }
+    .card { background: #16213e; padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; }
+    .card h3 { margin-bottom: 1rem; color: #5865F2; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.3rem; color: #aaa; font-size: 0.9rem; }
+    input, textarea { width: 100%; padding: 10px; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 6px; color: #eee; font-size: 0.95rem; }
+    textarea { resize: vertical; min-height: 60px; }
+    input:focus, textarea:focus { outline: none; border-color: #5865F2; }
+    .btn { padding: 10px 24px; background: #5865F2; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+    .btn:hover { background: #4752c4; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; background: #2a2a4a; margin: 2px; }
+    .badge.on { background: #3ba55c; }
+    .word-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .info-text { font-size: 0.85rem; color: #666; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <h2>🤖 UAC Bot</h2>
+    <a href="/dashboard">← Retour</a>
+  </nav>
+  <div class="container">
+    <h1>⚙️ <%= guild.name %></h1>
+
+    <form method="POST">
+      <div class="card">
+        <h3>📋 Logs d'audit</h3>
+        <div class="form-group">
+          <label>ID du salon de logs</label>
+          <input type="text" name="logChannel" value="<%= config.logChannel || '' %>" placeholder="ID du salon">
+          <div class="info-text">Utilise /setlogs dans Discord ou entre l'ID ici</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>👋 Bienvenue</h3>
+        <div class="form-group">
+          <label>ID du salon de bienvenue</label>
+          <input type="text" name="welcomeChannel" value="<%= config.welcomeChannel || '' %>" placeholder="ID du salon">
+        </div>
+        <div class="form-group">
+          <label>Message de bienvenue</label>
+          <textarea name="welcomeMessage"><%= config.welcomeMessage || 'Bienvenue {user} sur **{server}** ! 🎉' %></textarea>
+          <div class="info-text">{user} = mention, {server} = nom du serveur</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>👋 Au revoir</h3>
+        <div class="form-group">
+          <label>ID du salon d'au revoir</label>
+          <input type="text" name="goodbyeChannel" value="<%= config.goodbyeChannel || '' %>" placeholder="ID du salon">
+        </div>
+        <div class="form-group">
+          <label>Message d'au revoir</label>
+          <textarea name="goodbyeMessage"><%= config.goodbyeMessage || '{user} a quitté **{server}**. 👋' %></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🚫 Mots interdits (<%= config.bannedWords.length %>)</h3>
+        <div class="word-list">
+          <% if (config.bannedWords.length === 0) { %>
+            <span class="info-text">Aucun mot interdit. Utilise /automod add dans Discord.</span>
+          <% } else { %>
+            <% config.bannedWords.forEach(w => { %>
+              <span class="badge on"><%= w %></span>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+
+      <button type="submit" class="btn">💾 Enregistrer</button>
+    </form>
+  </div>
+</body>
+</html>
