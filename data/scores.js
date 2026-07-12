@@ -21,7 +21,7 @@ function saveData(guildId, userId, games) {
 }
 
 function ensureUser(userId, game) {
-  let row = db.prepare('SELECT value FROM scores WHERE guildId = ? AND userId = ?').get('global', userId);
+  const row = db.prepare('SELECT value FROM scores WHERE guildId = ? AND userId = ?').get('global', userId);
   let games;
   if (!row) {
     games = {};

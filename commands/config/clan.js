@@ -413,8 +413,8 @@ module.exports = {
         const clan = getSelf(); requireClan(clan);
         const war = getActiveWar(guildId, clan.clanId);
         if (!war) return interaction.reply({ content: '📭 Aucune guerre en cours.', ephemeral: true });
-        const attacker = getClan(guildId, war.attackerClanId);
-        const defender = getClan(guildId, war.defenderClanId);
+        const attacker = getFullClan(guildId, war.attackerClanId);
+        const defender = getFullClan(guildId, war.defenderClanId);
         const now = Date.now();
         const end = new Date(war.endTime).getTime();
         const remaining = Math.max(0, Math.floor((end - now) / 60000));

@@ -31,7 +31,7 @@ module.exports = {
     ),
   async execute(interaction, client) {
     const { start, play, drawBoard } = require('../../games/morpion');
-    const { getBalance } = require('../../data/economy');
+    const { getBalance, addBalance } = require('../../data/economy');
 
     if (interaction.options.getSubcommand() === 'defier') {
       const adversaire = interaction.options.getUser('adversaire');

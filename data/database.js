@@ -119,8 +119,14 @@ db.exec(`
     attackerClanId TEXT NOT NULL, defenderClanId TEXT NOT NULL,
     status TEXT DEFAULT 'pending', attackerScore INTEGER DEFAULT 0,
     defenderScore INTEGER DEFAULT 0, endTime TEXT,
+    bet INTEGER DEFAULT 0,
     PRIMARY KEY (warId)
   );
+`);
+
+try { db.exec(`ALTER TABLE clan_wars ADD COLUMN bet INTEGER DEFAULT 0`); } catch (e) { /* already exists */ }
+
+db.exec(`
   CREATE TABLE IF NOT EXISTS clan_upgrades (
     guildId TEXT NOT NULL, clanId TEXT NOT NULL, upgradeId TEXT NOT NULL,
     level INTEGER DEFAULT 1, PRIMARY KEY (guildId, clanId, upgradeId)

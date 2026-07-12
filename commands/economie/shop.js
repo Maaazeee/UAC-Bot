@@ -79,7 +79,7 @@ module.exports = {
       return interaction.reply({ content: `✅ Tu as acheté **${item.name}** pour **${item.price}** 🪙 !` });
     }
     if (sub === 'add') {
-      const id = Date.now().toString(36);
+      const id = require('crypto').randomUUID();
       const itemType = interaction.options.getString('type') || 'role';
       db.prepare('INSERT INTO shop (guildId, itemId, name, price, roleId, description, type, maxQuantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
         interaction.guildId, id, interaction.options.getString('nom'), interaction.options.getInteger('prix'),

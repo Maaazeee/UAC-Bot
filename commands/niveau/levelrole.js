@@ -53,7 +53,7 @@ module.exports = {
 
     const rewardsMulti = get(interaction.guildId, 'levelRewardsMulti') || {};
     const rewardsSingle = get(interaction.guildId, 'levelRewards') || {};
-    let lines = [];
+    const lines = [];
 
     const singleEntries = Object.entries(rewardsSingle).sort((a, b) => a[0] - b[0]);
     for (const [lvl, roleId] of singleEntries) {

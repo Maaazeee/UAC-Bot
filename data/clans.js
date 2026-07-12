@@ -193,7 +193,7 @@ function warChallenge(guildId, attackerClanId, defenderClanId, bet = 0) {
     removeClanBalance(guildId, attackerClanId, bet);
     removeClanBalance(guildId, defenderClanId, bet);
   }
-  db.prepare('INSERT INTO clan_wars (guildId, warId, attackerClanId, defenderClanId, status, endTime) VALUES (?, ?, ?, ?, ?, ?)').run(guildId, warId, attackerClanId, defenderClanId, 'pending', endTime);
+  db.prepare('INSERT INTO clan_wars (guildId, warId, attackerClanId, defenderClanId, status, endTime, bet) VALUES (?, ?, ?, ?, ?, ?, ?)').run(guildId, warId, attackerClanId, defenderClanId, 'pending', endTime, bet);
   return { warId, bet };
 }
 
