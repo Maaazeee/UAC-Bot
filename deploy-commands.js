@@ -1,6 +1,7 @@
 const { REST, Routes } = require('discord.js');
 const { readdirSync, statSync } = require('fs');
 const { join } = require('path');
+const logger = require('./data/logger');
 require('dotenv/config');
 
 const commands = [];
@@ -24,15 +25,17 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   try {
-    console.log(`📦 Déploiement de ${commands.length} commandes...`);
+    if (commands.length === 0) { logger.warn('Aucune commande à déployer.'); return; }
+    logger.info(`Déploiement de ${commands.length} commandes...`);
 
     const data = await rest.put(
       Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
       { body: commands },
     );
 
-    console.log(`✅ ${data.length} commandes déployées !`);
+    logger.info(`${data.length} commandes déployées avec succès.`);
   } catch (error) {
-    console.error(error);
+    logger.error(`Erreur déploiement: ${error.stack || error}`);
+    process.exit(1);
   }
 })();

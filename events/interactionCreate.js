@@ -1,45 +1,10 @@
 const { Events, Collection, PermissionFlagsBits, ChannelType, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const logger = require('../data/logger');
 
 const cooldowns = new Collection();
 const cooldownTime = 3;
 
-const permissionsRequired = {
-  kick: PermissionFlagsBits.KickMembers,
-  ban: PermissionFlagsBits.BanMembers,
-  unban: PermissionFlagsBits.BanMembers,
-  timeout: PermissionFlagsBits.ModerateMembers,
-  softban: PermissionFlagsBits.BanMembers,
-  tempban: PermissionFlagsBits.BanMembers,
-  clear: PermissionFlagsBits.ManageMessages,
-  purge: PermissionFlagsBits.ManageMessages,
-  slowmode: PermissionFlagsBits.ManageChannels,
-  lock: PermissionFlagsBits.ManageChannels,
-  unlock: PermissionFlagsBits.ManageChannels,
-  warn: PermissionFlagsBits.ModerateMembers,
-  delwarn: PermissionFlagsBits.ModerateMembers,
-  voicemute: PermissionFlagsBits.MuteMembers,
-  voicedeafen: PermissionFlagsBits.DeafenMembers,
-  voicemove: PermissionFlagsBits.MoveMembers,
-  moveall: PermissionFlagsBits.MoveMembers,
-  vckick: PermissionFlagsBits.MoveMembers,
-  nick: PermissionFlagsBits.ManageNicknames,
-  role: PermissionFlagsBits.ManageRoles,
-  levelset: PermissionFlagsBits.Administrator,
-  setlogs: PermissionFlagsBits.Administrator,
-  setwelcome: PermissionFlagsBits.Administrator,
-  setgoodbye: PermissionFlagsBits.Administrator,
-  autorole: PermissionFlagsBits.Administrator,
-  automod: PermissionFlagsBits.Administrator,
-  antiinvite: PermissionFlagsBits.Administrator,
-  antiraid: PermissionFlagsBits.Administrator,
-  strike: PermissionFlagsBits.Administrator,
-  reactrole: PermissionFlagsBits.Administrator,
-  levelrole: PermissionFlagsBits.Administrator,
-  levelchannel: PermissionFlagsBits.Administrator,
-  levelannounce: PermissionFlagsBits.Administrator,
-  xpmultiplier: PermissionFlagsBits.Administrator,
-  voicexp: PermissionFlagsBits.Administrator,
-};
+const commandsNeedingDefer = ['level', 'setwelcome', 'play', 'music', 'clan'];
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -64,11 +29,6 @@ module.exports = {
       timestamps.set(interaction.user.id, now);
       setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
-      const perm = permissionsRequired[interaction.commandName];
-      if (perm && !interaction.memberPermissions?.has(perm)) {
-        return interaction.reply({ content: '❌ Tu n\'as pas la permission nécessaire.', ephemeral: true });
-      }
-
       const { get } = require('../data/config');
       const restrictedRoles = get(interaction.guildId, `perm:${interaction.commandName}`);
       if (restrictedRoles) {
@@ -81,11 +41,16 @@ module.exports = {
         } catch {}
       }
 
+      if (commandsNeedingDefer.includes(interaction.commandName)) {
+        await interaction.deferReply().catch(() => {});
+      }
+
       try {
-        command.execute(interaction, client);
+        await command.execute(interaction, client);
       } catch (error) {
-        console.error(error);
-        interaction.reply({ content: '❌ Une erreur est survenue.', ephemeral: true }).catch(() => {});
+        logger.error(`Erreur commande /${interaction.commandName}: ${error.stack || error}`);
+        const replyMethod = interaction.deferred ? interaction.editReply : interaction.reply;
+        replyMethod.call(interaction, { content: '❌ Une erreur est survenue.', ephemeral: true }).catch(() => {});
       }
       return;
     }

@@ -28,7 +28,7 @@ client.commands = new Collection();
 client.games = new Collection();
 
 client.distube = new DisTube(client, {
-  plugins: [new SpotifyPlugin(), new SoundCloudPlugin(), new YtDlpPlugin({ update: false })],
+  plugins: [new SpotifyPlugin(), new SoundCloudPlugin(), new YtDlpPlugin({ update: true })],
   emitNewSongOnly: true,
   savePreviousSongs: true,
   nsfw: true,
@@ -104,4 +104,15 @@ for (const file of eventFiles) {
   }
 }
 
-client.login(process.env.DISCORD_TOKEN).then(() => logger.info('Bot démarré')).catch(e => logger.error('Échec login:', e));
+client.login(process.env.DISCORD_TOKEN).then(() => {
+  logger.info('Bot démarré');
+  const status = process.env.BOT_STATUS || '🎮 mini-jeux';
+  client.user.setPresence({ activities: [{ name: status, type: 0 }] });
+}).catch(e => logger.error('Échec login:', e));
+
+process.on('unhandledRejection', (reason) => {
+  logger.error(`Unhandled Rejection: ${reason instanceof Error ? reason.stack : reason}`);
+});
+process.on('uncaughtException', (err) => {
+  logger.error(`Uncaught Exception: ${err.stack}`);
+});

@@ -1,7 +1,6 @@
-node_modules
-.env
 node_modules/
 .env
 data/bot.db
 logs/
 *.bat
+config.json
