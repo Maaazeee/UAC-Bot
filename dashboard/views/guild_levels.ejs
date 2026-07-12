@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('partials/head', {title: 'Niveaux', guild, user}) %>
+</head>
+<body>
+  <%- include('partials/sidebar', {guild, user, currentPage: 'Niveaux'}) %>
+  <%- include('partials/topbar', {title: 'Niveaux', guild, user}) %>
+
+  <main class="ml-60 mt-16 p-6">
+    <% if (typeof message !== 'undefined' && message) { %>
+      <div class="toast bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg mb-4"><%= message %></div>
+    <% } %>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Membres classés</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= levels.length %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Niveau moyen</div>
+        <div class="text-2xl font-bold text-white mt-1">
+          <%= levels.length ? Math.round(levels.reduce((a,b) => a+b.level, 0) / levels.length) : '-' %>
+        </div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Niveau max</div>
+        <div class="text-2xl font-bold text-white mt-1">
+          <%= levels.length ? Math.max(...levels.map(l => l.level)) : '-' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header"><h3 class="font-semibold text-white">📊 Classement</h3></div>
+      <div class="card-body">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-gray-400 border-b border-[#252540]">
+                <th class="text-left py-2 px-2">#</th>
+                <th class="text-left py-2 px-2">Utilisateur</th>
+                <th class="text-right py-2 px-2">Niveau</th>
+                <th class="text-right py-2 px-2">XP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% levels.slice(0, 50).forEach(function(u, i) { %>
+                <tr class="border-b border-[#252540] hover:bg-[#0f0f1a]">
+                  <td class="py-2 px-2 text-gray-400 font-mono"><%= i+1 %></td>
+                  <td class="py-2 px-2 text-white"><%= u.username || '#'+u.userId.slice(-4) %></td>
+                  <td class="py-2 px-2 text-right text-indigo-400"><%= u.level %></td>
+                  <td class="py-2 px-2 text-right text-gray-300"><%= u.xp %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header"><h3 class="font-semibold text-white">🎁 Récompenses niveaux</h3></div>
+      <div class="card-body">
+        <form method="POST" action="/dashboard/<%= guild.id %>/levels">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Ajouter une récompense rôle</label>
+              <div class="flex gap-2">
+                <input type="number" name="level" placeholder="Niveau" class="w-24">
+                <input type="text" name="roleId" placeholder="ID du rôle" class="flex-1">
+                <button type="submit" name="action" value="addReward" class="btn-primary text-sm px-3">Ajouter</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Ajouter une récompense salon</label>
+              <div class="flex gap-2">
+                <input type="number" name="level" placeholder="Niveau" class="w-24">
+                <input type="text" name="channelId" placeholder="ID du salon" class="flex-1">
+                <button type="submit" name="action" value="addChannelReward" class="btn-primary text-sm px-3">Ajouter</button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="text-sm font-semibold text-gray-300 mb-2">Récompenses rôles</h4>
+            <% var rewards = config.levelRewards || {}; var rewardKeys = Object.keys(rewards); %>
+            <% if (rewardKeys.length === 0) { %>
+              <p class="text-gray-600 text-sm">Aucune récompense rôle définie.</p>
+            <% } else { %>
+              <% rewardKeys.sort((a,b) => a-b).forEach(function(lvl) { %>
+                <div class="flex items-center justify-between bg-[#0f0f1a] rounded-lg px-3 py-2 mb-1">
+                  <span class="text-sm text-gray-300">Niveau <strong><%= lvl %></strong> → Rôle <code class="text-indigo-400"><%= rewards[lvl] %></code></span>
+                </div>
+              <% }); %>
+            <% } %>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-gray-300 mb-2">Récompenses salons</h4>
+            <% var channelRewards = config.levelChannelRewards || {}; var crKeys = Object.keys(channelRewards); %>
+            <% if (crKeys.length === 0) { %>
+              <p class="text-gray-600 text-sm">Aucune récompense salon définie.</p>
+            <% } else { %>
+              <% crKeys.sort((a,b) => a-b).forEach(function(lvl) { %>
+                <div class="flex items-center justify-between bg-[#0f0f1a] rounded-lg px-3 py-2 mb-1">
+                  <span class="text-sm text-gray-300">Niveau <strong><%= lvl %></strong> → Salon <code class="text-indigo-400"><%= channelRewards[lvl] %></code></span>
+                </div>
+              <% }); %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

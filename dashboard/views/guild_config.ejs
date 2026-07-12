@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('partials/head', {title: 'Configuration', guild, user}) %>
+</head>
+<body>
+  <%- include('partials/sidebar', {guild, user, currentPage: 'Configuration'}) %>
+  <%- include('partials/topbar', {title: 'Configuration', guild, user}) %>
+
+  <main class="ml-60 mt-16 p-6">
+    <% if (typeof message !== 'undefined' && message) { %>
+      <div class="toast bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg mb-4"><%= message %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="toast bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-4"><%= error %></div>
+    <% } %>
+
+    <form method="POST">
+      <div class="card mb-6">
+        <div class="card-header"><h3 class="font-semibold text-white">📋 Logs d'audit</h3></div>
+        <div class="card-body space-y-4">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Salon de logs (ID)</label>
+            <input type="text" name="logChannel" value="<%= config.logChannel || '' %>" placeholder="ID du salon">
+            <p class="text-gray-600 text-xs mt-1">Utilise /setlogs dans Discord ou entre l'ID ici</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="card-header"><h3 class="font-semibold text-white">👋 Bienvenue / Au revoir</h3></div>
+        <div class="card-body space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Salon de bienvenue (ID)</label>
+              <input type="text" name="welcomeChannel" value="<%= config.welcomeChannel || '' %>" placeholder="ID du salon">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Salon d'au revoir (ID)</label>
+              <input type="text" name="goodbyeChannel" value="<%= config.goodbyeChannel || '' %>" placeholder="ID du salon">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Message de bienvenue</label>
+            <textarea name="welcomeMessage" rows="2"><%= config.welcomeMessage || 'Bienvenue {user} sur **{server}** ! 🎉' %></textarea>
+            <p class="text-gray-600 text-xs mt-1">{user} = mention, {server} = nom du serveur</p>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Message d'au revoir</label>
+            <textarea name="goodbyeMessage" rows="2"><%= config.goodbyeMessage || '{user} a quitté **{server}**. 👋' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="card-header"><h3 class="font-semibold text-white">🚫 Auto-modération</h3></div>
+        <div class="card-body space-y-4">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <% var toggles = [
+              { key: 'antiInvite', label: 'Anti-invite', val: config.antiInvite },
+              { key: 'antiLink', label: 'Anti-liens', val: config.antiLink },
+              { key: 'antiCaps', label: 'Anti-majuscules', val: config.antiCaps },
+              { key: 'antiMassMention', label: 'Anti-mass mention', val: config.antiMassMention },
+            ]; %>
+            <% toggles.forEach(function(t) { %>
+              <label class="flex items-center gap-3 bg-[#0f0f1a] rounded-lg p-3 cursor-pointer">
+                <input type="hidden" name="<%= t.key %>" value="off">
+                <input type="checkbox" name="<%= t.key %>" value="on" <%= t.val ? 'checked' : '' %> class="w-4 h-4 accent-[#5865F2]">
+                <span class="text-sm text-gray-300"><%= t.label %></span>
+              </label>
+            <% }); %>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Mots interdits (séparés par des virgules)</label>
+            <input type="text" name="bannedWords" value="<%= (config.bannedWords || []).join(', ') %>" placeholder="mot1, mot2, mot3">
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="card-header"><h3 class="font-semibold text-white">🎯 Autres</h3></div>
+        <div class="card-body space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Rôle autorole (ID)</label>
+              <input type="text" name="autorole" value="<%= config.autorole || '' %>" placeholder="ID du rôle">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Role de vérification (ID)</label>
+              <input type="text" name="verifyRole" value="<%= config.verifyRole || '' %>" placeholder="ID du rôle">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">XP vocal activé</label>
+            <label class="flex items-center gap-3 bg-[#0f0f1a] rounded-lg p-3 cursor-pointer w-fit">
+              <input type="hidden" name="voicexp" value="off">
+              <input type="checkbox" name="voicexp" value="on" <%= config.voicexp ? 'checked' : '' %> class="w-4 h-4 accent-[#5865F2]">
+              <span class="text-sm text-gray-300"><%= config.voicexp ? 'Activé' : 'Désactivé' %></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">💾 Enregistrer les modifications</button>
+    </form>
+  </main>
+</body>
+</html>

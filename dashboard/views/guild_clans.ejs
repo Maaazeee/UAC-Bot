@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('partials/head', {title: 'Clans', guild, user}) %>
+</head>
+<body>
+  <%- include('partials/sidebar', {guild, user, currentPage: 'Clans'}) %>
+  <%- include('partials/topbar', {title: 'Clans', guild, user}) %>
+
+  <main class="ml-60 mt-16 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Clans actifs</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= clans.length %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Membres dans un clan</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= clans.reduce((a,c) => a+(c.memberCount||0), 0) %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Guerres en cours</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= wars.length %></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="font-semibold text-white">🏰 Liste des clans</h3></div>
+      <div class="card-body">
+        <% if (clans.length === 0) { %>
+          <p class="text-gray-500 text-sm text-center py-6">Aucun clan créé sur ce serveur.</p>
+        <% } else { %>
+          <div class="grid gap-4">
+            <% clans.forEach(function(c) { %>
+              <div class="bg-[#0f0f1a] rounded-xl p-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-full bg-[#252540] flex items-center justify-center text-lg">
+                    <%= c.emoji || '🏰' %>
+                  </div>
+                  <div>
+                    <div class="text-white font-semibold"><%= c.name %></div>
+                    <div class="text-gray-500 text-sm">
+                      <%= c.memberCount || '0' %> membres · Niveau <%= c.level || 1 %>
+                      <% if (c.balance) { %> · <%= c.balance %> 🪙 cagnotte<% } %>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="text-xs text-gray-600">ID: <%= c.id %></div>
+                  <% var color = c.color || '#5865F2'; %>
+                  <div class="w-3 h-3 rounded-full" style="background:<%= color %>"></div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (wars.length > 0) { %>
+      <div class="card mt-6">
+        <div class="card-header"><h3 class="font-semibold text-white">⚔️ Guerres en cours</h3></div>
+        <div class="card-body">
+          <div class="space-y-3">
+            <% wars.forEach(function(w) { %>
+              <div class="bg-[#0f0f1a] rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <span class="text-white font-medium">Clan <%= w.attackerClanId.slice(0,8) %>...</span>
+                  <span class="text-gray-400 mx-2">vs</span>
+                  <span class="text-white font-medium">Clan <%= w.defenderClanId.slice(0,8) %>...</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="text-yellow-400 text-sm font-mono"><%= w.attackerScore %> - <%= w.defenderScore %></span>
+                  <span class="text-xs text-gray-500">
+                    Fin: <%= new Date(w.endTime).toLocaleDateString('fr-FR') %>
+                  </span>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

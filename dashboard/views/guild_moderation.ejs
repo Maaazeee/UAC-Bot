@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('partials/head', {title: 'Modération', guild, user}) %>
+</head>
+<body>
+  <%- include('partials/sidebar', {guild, user, currentPage: 'Modération'}) %>
+  <%- include('partials/topbar', {title: 'Modération', guild, user}) %>
+
+  <main class="ml-60 mt-16 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Avertissements</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= warns.length %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Membres sanctionnés</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= new Set(warns.map(w => w.userId)).size %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Signalements</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= reports.length %></div>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header"><h3 class="font-semibold text-white">⚠️ Avertissements</h3></div>
+      <div class="card-body">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-gray-400 border-b border-[#252540]">
+                <th class="text-left py-2 px-2">ID</th>
+                <th class="text-left py-2 px-2">Utilisateur</th>
+                <th class="text-left py-2 px-2">Raison</th>
+                <th class="text-left py-2 px-2">Modérateur</th>
+                <th class="text-left py-2 px-2">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (warns.length === 0) { %>
+                <tr><td colspan="5" class="text-gray-500 text-center py-6">Aucun avertissement.</td></tr>
+              <% } else { %>
+                <% warns.slice(0, 50).forEach(function(w) { %>
+                  <tr class="border-b border-[#252540] hover:bg-[#0f0f1a]">
+                    <td class="py-2 px-2 text-gray-400 font-mono text-xs"><%= w.id %></td>
+                    <td class="py-2 px-2 text-white"><%= w.username || '#'+w.userId.slice(-4) %></td>
+                    <td class="py-2 px-2 text-gray-300 max-w-xs truncate"><%= w.reason %></td>
+                    <td class="py-2 px-2 text-gray-400"><%= w.moderator || '?' %></td>
+                    <td class="py-2 px-2 text-gray-500 text-xs"><%= new Date(w.createdAt).toLocaleDateString('fr-FR') %></td>
+                  </tr>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="font-semibold text-white">📮 Signalements</h3></div>
+      <div class="card-body">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-gray-400 border-b border-[#252540]">
+                <th class="text-left py-2 px-2">Cible</th>
+                <th class="text-left py-2 px-2">Raison</th>
+                <th class="text-left py-2 px-2">Auteur</th>
+                <th class="text-left py-2 px-2">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (reports.length === 0) { %>
+                <tr><td colspan="4" class="text-gray-500 text-center py-6">Aucun signalement.</td></tr>
+              <% } else { %>
+                <% reports.slice(0, 30).forEach(function(r) { %>
+                  <tr class="border-b border-[#252540] hover:bg-[#0f0f1a]">
+                    <td class="py-2 px-2 text-white"><%= r.username || '#'+r.userId.slice(-4) %></td>
+                    <td class="py-2 px-2 text-gray-300 max-w-xs truncate"><%= r.reason %></td>
+                    <td class="py-2 px-2 text-gray-400"><%= r.author || '?' %></td>
+                    <td class="py-2 px-2 text-gray-500 text-xs"><%= new Date(r.createdAt).toLocaleDateString('fr-FR') %></td>
+                  </tr>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -3,63 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - UAC Bot</title>
+  <title>Mes serveurs - UAC Bot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
-    nav { background: #16213e; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2a2a4a; }
-    nav h2 { font-size: 1.2rem; }
-    nav .user { display: flex; align-items: center; gap: 8px; }
-    nav .avatar { width: 32px; height: 32px; border-radius: 50%; }
-    nav a { color: #aaa; text-decoration: none; }
-    nav a:hover { color: #fff; }
-    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-    h1 { margin-bottom: 1.5rem; }
-    .guild-list { display: grid; gap: 12px; }
-    .guild-card { background: #16213e; padding: 1rem 1.5rem; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; }
-    .guild-card .info { display: flex; align-items: center; gap: 12px; }
-    .guild-card .icon { width: 40px; height: 40px; border-radius: 50%; background: #2a2a4a; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-    .guild-card .icon img { width: 40px; height: 40px; border-radius: 50%; }
-    .guild-card .name { font-weight: 600; }
-    .btn { padding: 8px 20px; background: #5865F2; color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; }
-    .btn:hover { background: #4752c4; }
-    .back { display: inline-block; margin-bottom: 1rem; color: #aaa; text-decoration: none; }
-    .back:hover { color: #fff; }
-    .empty { text-align: center; padding: 3rem; color: #666; }
+    body { background: #0f0f1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .guild-card { transition: all 0.2s; }
+    .guild-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
   </style>
 </head>
-<body>
-  <nav>
-    <h2>🤖 UAC Bot</h2>
-    <div class="user">
-      <img class="avatar" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="">
-      <span><%= user.username %></span>
-      <a href="/logout">Déconnexion</a>
+<body class="min-h-screen">
+  <nav class="bg-[#16213e] border-b border-[#252540] px-6 py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <span class="text-2xl">🤖</span>
+      <span class="font-bold text-lg text-white">UAC Bot</span>
+    </a>
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-gray-400"><%= user.username %></span>
+      <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="w-8 h-8 rounded-full" alt="">
+      <a href="/logout" class="text-sm text-gray-500 hover:text-white transition">Déconnexion</a>
     </div>
   </nav>
-  <div class="container">
-    <h1>Mes serveurs</h1>
+
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-white mb-2">Mes serveurs</h1>
+    <p class="text-gray-500 mb-8">Sélectionne un serveur pour le configurer</p>
+
     <% if (guilds.length === 0) { %>
-      <div class="empty">Aucun serveur administrable trouvé.</div>
+      <div class="bg-[#16213e] border border-[#252540] rounded-xl p-12 text-center">
+        <div class="text-4xl mb-4">😕</div>
+        <p class="text-gray-400">Aucun serveur administrable trouvé.</p>
+        <p class="text-gray-600 text-sm mt-2">Assure-toi d'avoir la permission "Administrateur" sur au moins un serveur.</p>
+      </div>
     <% } else { %>
-      <div class="guild-list">
-        <% guilds.forEach(g => { %>
-          <div class="guild-card">
-            <div class="info">
-              <div class="icon">
+      <div class="grid gap-4">
+        <% guilds.forEach(function(g) { %>
+          <a href="/dashboard/<%= g.id %>" class="guild-card bg-[#16213e] border border-[#252540] rounded-xl p-5 flex items-center justify-between no-underline">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-full bg-[#252540] flex items-center justify-center overflow-hidden flex-shrink-0">
                 <% if (g.icon) { %>
-                  <img src="https://cdn.discordapp.com/icons/<%= g.id %>/<%= g.icon %>.png" alt="">
+                  <img src="https://cdn.discordapp.com/icons/<%= g.id %>/<%= g.icon %>.png" class="w-full h-full object-cover" alt="">
                 <% } else { %>
-                  🏠
+                  <span class="text-lg">🏠</span>
                 <% } %>
               </div>
-              <span class="name"><%= g.name %></span>
+              <div>
+                <div class="text-white font-semibold"><%= g.name %></div>
+                <div class="text-gray-500 text-sm">ID: <%= g.id %></div>
+              </div>
             </div>
-            <a href="/dashboard/<%= g.id %>" class="btn">Configurer</a>
-          </div>
+            <div class="bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+              Configurer →
+            </div>
+          </a>
         <% }); %>
       </div>
     <% } %>
-  </div>
+  </main>
 </body>
 </html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('partials/head', {title: 'Logs', guild, user}) %>
+</head>
+<body>
+  <%- include('partials/sidebar', {guild, user, currentPage: 'Logs'}) %>
+  <%- include('partials/topbar', {title: 'Logs', guild, user}) %>
+
+  <main class="ml-60 mt-16 p-6">
+    <div class="card">
+      <div class="card-header flex items-center justify-between">
+        <h3 class="font-semibold text-white">📋 Derniers logs</h3>
+        <form method="GET">
+          <select name="level" onchange="this.form.submit()" class="w-auto text-sm py-1 px-2">
+            <option value="">Tous niveaux</option>
+            <option value="info" <%= level === 'info' ? 'selected' : '' %>>Info</option>
+            <option value="warn" <%= level === 'warn' ? 'selected' : '' %>>Warn</option>
+            <option value="error" <%= level === 'error' ? 'selected' : '' %>>Error</option>
+          </select>
+        </form>
+      </div>
+      <div class="card-body">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-gray-400 border-b border-[#252540]">
+                <th class="text-left py-2 px-2">Date</th>
+                <th class="text-left py-2 px-2">Niveau</th>
+                <th class="text-left py-2 px-2">Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (logs.length === 0) { %>
+                <tr><td colspan="3" class="text-gray-500 text-center py-6">Aucun log.</td></tr>
+              <% } else { %>
+                <% logs.forEach(function(l) { %>
+                  <tr class="border-b border-[#252540] hover:bg-[#0f0f1a] font-mono text-xs">
+                    <td class="py-2 px-2 text-gray-500 whitespace-nowrap"><%= l.timestamp %></td>
+                    <td class="py-2 px-2">
+                      <% if (l.level === 'ERROR') { %>
+                        <span class="text-red-400 font-semibold">ERROR</span>
+                      <% } else if (l.level === 'WARN') { %>
+                        <span class="text-yellow-400 font-semibold">WARN</span>
+                      <% } else { %>
+                        <span class="text-green-400">INFO</span>
+                      <% } %>
+                    </td>
+                    <td class="py-2 px-2 text-gray-300 max-w-lg truncate"><%= l.message %></td>
+                  </tr>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

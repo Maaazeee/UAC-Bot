@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('partials/head', {title: 'Économie', guild, user}) %>
+</head>
+<body>
+  <%- include('partials/sidebar', {guild, user, currentPage: 'Économie'}) %>
+  <%- include('partials/topbar', {title: 'Économie', guild, user}) %>
+
+  <main class="ml-60 mt-16 p-6">
+    <% if (typeof message !== 'undefined' && message) { %>
+      <div class="toast bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg mb-4"><%= message %></div>
+    <% } %>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Comptes actifs</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= economy.length %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Total en circulation</div>
+        <div class="text-2xl font-bold text-white mt-1">
+          <%= economy.reduce((a,b) => a+b.balance, 0).toLocaleString() %> 🪙
+        </div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Articles en boutique</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= shopItems.length %></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="card">
+        <div class="card-header"><h3 class="font-semibold text-white">💰 Top richesses</h3></div>
+        <div class="card-body">
+          <% if (economy.length === 0) { %>
+            <p class="text-gray-500 text-sm">Aucun compte économique.</p>
+          <% } else { %>
+            <% economy.slice(0, 30).forEach(function(u, i) { %>
+              <div class="flex items-center gap-3 py-2 border-b border-[#252540] last:border-0">
+                <span class="text-gray-400 w-6 font-mono"><%= i+1 %>.</span>
+                <div class="flex-1">
+                  <span class="text-white font-medium"><%= u.username || '#'+u.userId.slice(-4) %></span>
+                </div>
+                <span class="text-green-400"><%= u.balance %> 🪙</span>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="font-semibold text-white">🏪 Boutique</h3></div>
+        <div class="card-body">
+          <form method="POST" action="/dashboard/<%= guild.id %>/economy" class="mb-4">
+            <div class="flex gap-2 mb-3">
+              <input type="text" name="itemName" placeholder="Nom article" class="flex-1">
+            </div>
+            <div class="flex gap-2 mb-3">
+              <input type="number" name="itemPrice" placeholder="Prix" class="w-24">
+              <select name="itemType" class="flex-1">
+                <option value="role">Rôle</option>
+                <option value="consumable">Consommable</option>
+                <option value="permanent">Permanent</option>
+              </select>
+            </div>
+            <button type="submit" name="action" value="addShopItem" class="btn-primary text-sm">➕ Ajouter à la boutique</button>
+          </form>
+
+          <div class="space-y-2">
+            <% if (shopItems.length === 0) { %>
+              <p class="text-gray-600 text-sm">Boutique vide.</p>
+            <% } else { %>
+              <% shopItems.forEach(function(item) { %>
+                <div class="flex items-center justify-between bg-[#0f0f1a] rounded-lg px-4 py-2">
+                  <div>
+                    <span class="text-white font-medium"><%= item.name %></span>
+                    <span class="text-gray-500 text-sm ml-2"><%= item.price %> 🪙</span>
+                    <span class="text-xs text-gray-600 ml-1">(<%= item.type %>)</span>
+                  </div>
+                  <form method="POST" action="/dashboard/<%= guild.id %>/economy" class="inline">
+                    <input type="hidden" name="itemId" value="<%= item.id %>">
+                    <button type="submit" name="action" value="removeShopItem" class="text-red-400 hover:text-red-300 text-sm">Supprimer</button>
+                  </form>
+                </div>
+              <% }); %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

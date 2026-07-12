@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('partials/head', {title: 'Vue d\'ensemble', guild, user}) %>
+</head>
+<body>
+  <%- include('partials/sidebar', {guild, user, currentPage: 'Vue d\'ensemble'}) %>
+  <%- include('partials/topbar', {title: 'Vue d\'ensemble', guild, user}) %>
+
+  <main class="ml-60 mt-16 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Membres</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= stats.memberCount || '?' %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Salons</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= stats.channelCount || '?' %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Rôles</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= stats.roleCount || '?' %></div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm">Commandes actives</div>
+        <div class="text-2xl font-bold text-white mt-1"><%= stats.commandCount || '81' %></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div class="card">
+        <div class="card-header"><h3 class="font-semibold text-white">📈 Top niveaux</h3></div>
+        <div class="card-body">
+          <% if (topLevels.length === 0) { %>
+            <p class="text-gray-500 text-sm">Aucun classement disponible.</p>
+          <% } else { %>
+            <% topLevels.forEach(function(u, i) { %>
+              <div class="flex items-center gap-3 py-2 border-b border-[#252540] last:border-0">
+                <span class="text-gray-400 w-6 text-center font-mono"><%= i+1 %>.</span>
+                <div class="flex-1">
+                  <span class="text-white font-medium"><%= u.username || '#'+u.userId.slice(-4) %></span>
+                  <span class="text-gray-500 text-sm ml-2">Niveau <%= u.level %></span>
+                </div>
+                <span class="text-yellow-400 text-sm"><%= u.xp %> XP</span>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="font-semibold text-white">💰 Top richesse</h3></div>
+        <div class="card-body">
+          <% if (topEconomy.length === 0) { %>
+            <p class="text-gray-500 text-sm">Aucune donnée économique.</p>
+          <% } else { %>
+            <% topEconomy.forEach(function(u, i) { %>
+              <div class="flex items-center gap-3 py-2 border-b border-[#252540] last:border-0">
+                <span class="text-gray-400 w-6 text-center font-mono"><%= i+1 %>.</span>
+                <div class="flex-1">
+                  <span class="text-white font-medium"><%= u.username || '#'+u.userId.slice(-4) %></span>
+                </div>
+                <span class="text-green-400 text-sm"><%= u.balance %> 🪙</span>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="font-semibold text-white">⚙️ Configuration rapide</h3></div>
+      <div class="card-body grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-[#0f0f1a] rounded-lg p-4 text-center">
+          <div class="text-2xl mb-1">📋</div>
+          <div class="text-sm text-gray-400">Logs</div>
+          <div class="text-xs text-gray-600"><%= config.logChannel ? '✅ Configuré' : '❌ Non configuré' %></div>
+        </div>
+        <div class="bg-[#0f0f1a] rounded-lg p-4 text-center">
+          <div class="text-2xl mb-1">👋</div>
+          <div class="text-sm text-gray-400">Bienvenue</div>
+          <div class="text-xs text-gray-600"><%= config.welcomeChannel ? '✅ Configuré' : '❌ Non configuré' %></div>
+        </div>
+        <div class="bg-[#0f0f1a] rounded-lg p-4 text-center">
+          <div class="text-2xl mb-1">🚫</div>
+          <div class="text-sm text-gray-400">Auto-mod</div>
+          <div class="text-xs text-gray-600"><%= config.bannedWords?.length ? `✅ ${config.bannedWords.length} mots` : '❌ Inactif' %></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

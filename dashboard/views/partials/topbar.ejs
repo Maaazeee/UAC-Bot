@@ -1,0 +1,10 @@
+<header class="fixed top-0 left-60 right-0 h-16 bg-[#16213e] border-b border-[#252540] flex items-center justify-between px-6 z-10">
+  <div>
+    <h1 class="text-lg font-semibold text-white"><%= typeof title !== 'undefined' ? title : 'Dashboard' %></h1>
+    <p class="text-xs text-gray-500"><%= guild.name %></p>
+  </div>
+  <div class="flex items-center gap-4">
+    <span class="text-sm text-gray-400"><%= user.username %></span>
+    <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="w-8 h-8 rounded-full" alt="">
+  </div>
+</header>
